@@ -23,6 +23,7 @@ set ( DISTS
   "lua" "LuaDist-core" "5.2.4-1"
   "luafilesystem" "LuaDist2" "1.6.3-2"
   "luasocket" "LuaDist2" "3.0rc1-2"
+  "md5" "LuaDist2" "1.2-1"
   "penlight" "LuaDist2" "1.4.1-2"
   "lualogging" "LuaDist2" "1.3.0-1"
   "rocksolver" "LuaDist2" "0.4.2-2"
