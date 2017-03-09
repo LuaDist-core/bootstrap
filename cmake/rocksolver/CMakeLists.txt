@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.1)
 
 project(rocksolver C CXX)
-set(rocksolver_VERSION 0.4.2-1)
+set(rocksolver_VERSION 0.4.2-2)
 
 set(ENV{LUA_DIR} ${CMAKE_INSTALL_PREFIX})
 find_package(Lua REQUIRED)
