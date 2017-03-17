@@ -30,7 +30,7 @@ set ( DISTS
   "rockspec2cmake" "LuaDist-core" "0.3-2"
   "zlib" "LuaDist-core" "1.2.6-1"
   "lua-git" "LuaDist-core" "0.5-1"
-  "luadist2" "LuaDist-core" "0.8-3"
+  "luadist2" "LuaDist-core" "0.8-4"
 )
 
 # Generate cache file with configuration from config.in
