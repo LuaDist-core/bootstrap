@@ -26,11 +26,11 @@ set ( DISTS
   "md5" "LuaDist2" "1.2-1"
   "penlight" "LuaDist2" "1.4.1-2"
   "lualogging" "LuaDist2" "1.3.0-1"
-  "rocksolver" "LuaDist-core" "0.5-1"
+  "rocksolver" "LuaDist-core" "0.5-2"
   "rockspec2cmake" "LuaDist-core" "0.3-2"
   "zlib" "LuaDist-core" "1.2.6-1"
   "lua-git" "LuaDist-core" "0.5-1"
-  "luadist2" "LuaDist-core" "0.8-6"
+  "luadist2" "LuaDist-core" "0.8-7"
 )
 
 # Generate cache file with configuration from config.in
