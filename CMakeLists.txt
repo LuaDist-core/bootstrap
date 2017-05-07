@@ -24,6 +24,7 @@ set ( DISTS
   "luafilesystem" "LuaDist2" "1.6.3-2"
   "luasocket" "LuaDist2" "3.0rc1-2"
   "md5" "LuaDist2" "1.2-1"
+  "lua2c" "LuaDist-core" "0.1-1"
   "penlight" "LuaDist2" "1.4.1-2"
   "lualogging" "LuaDist2" "1.3.0-1"
   "rocksolver" "LuaDist-core" "0.5-5"
@@ -31,7 +32,6 @@ set ( DISTS
   "zlib" "LuaDist-core" "1.2.6-1"
   "lua-git" "LuaDist-core" "0.5-1"
   "luadist2" "LuaDist-core" "0.9-0"
-  "lua2c" "LuaDist-core" "0.1-1"
 )
 
 # Generate cache file with configuration from config.in
