@@ -1,82 +1,59 @@
-# Copyright (C) 2013 LuaDist
-# Redistribution and use of this file is allowed according to the terms of the MIT license.
-# For details see the COPYRIGHT file distributed with LuaDist.
-# Please note that the package source code is licensed under its own license.
+# Generated Cmake file begin
+cmake_minimum_required(VERSION 3.1)
 
-# This is a straightforward bootstrap for LuaDist.
-project ( luadist_bootstrap NONE )
-cmake_minimum_required ( VERSION 2.8 )
-include ( ExternalProject )
+project(lua2c C CXX)
+set(lua2c_VERSION 0.1-1)
 
-## SETTINGS
-# Build Release by default
-if ( NOT CMAKE_BUILD_TYPE)
-  set ( CMAKE_BUILD_TYPE "MinSizeRel" CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE )
-endif ()
+set(ENV{LUA_DIR} ${CMAKE_INSTALL_PREFIX})
+find_package(Lua REQUIRED)
 
-# Bootstrap destination
-set ( BOOT_PREFIX ${CMAKE_INSTALL_PREFIX} )
+## INSTALL DEFAULTS (Relative to CMAKE_INSTALL_PREFIX)
+# Primary paths
+set(INSTALL_BIN bin CACHE PATH "Where to install binaries to.")
+set(INSTALL_LIB lib CACHE PATH "Where to install libraries to.")
+set(INSTALL_ETC etc CACHE PATH "Where to store configuration files")
+set(INSTALL_SHARE share CACHE PATH "Directory for shared data.")
 
-# Install dists required for bootstrap by default
-# Format: package (repository name), owner (github organization / user), git tag (version)
-set ( DISTS
-  "lua" "LuaDist-core" "5.2.4-1"
-  "luafilesystem" "LuaDist2" "1.6.3-2"
-  "luasocket" "LuaDist2" "3.0rc1-2"
-  "md5" "LuaDist2" "1.2-1"
-  "penlight" "LuaDist2" "1.4.1-2"
-  "lualogging" "LuaDist2" "1.3.0-1"
-  "rocksolver" "LuaDist-core" "0.5-5"
-  "rockspec2cmake" "LuaDist-core" "0.3-4"
-  "zlib" "LuaDist-core" "1.2.6-1"
-  "lua-git" "LuaDist-core" "0.5-1"
-  "luadist2" "LuaDist-core" "0.9-0"
-  "lua2c" "LuaDist-core" "0.1-1"
-)
+set(INSTALL_LMOD ${INSTALL_LIB}/lua/${LUA_VERSION_MAJOR}.${LUA_VERSION_MINOR} CACHE PATH "Directory to install Lua modules.")
+set(INSTALL_CMOD ${INSTALL_LIB}/lua/${LUA_VERSION_MAJOR}.${LUA_VERSION_MINOR} CACHE PATH "Directory to install Lua binary modules.")
 
-# Generate cache file with configuration from config.in
-configure_file ( config.in ${CMAKE_CURRENT_BINARY_DIR}/config.cmake )
+## Platform detection
+# By default use system name
+set(DETECTED_PLATFORM ${CMAKE_SYSTEM_NAME})
+string(TOLOWER ${DETECTED_PLATFORM} DETECTED_PLATFORM)
 
-macro ( install_dist _DIST _OWNER _TAG )
-  set ( _DIST_SOURCE GIT_REPOSITORY http://github.com/${_OWNER}/${_DIST}.git GIT_TAG ${_TAG} )
+# Overrides for more specific platforms
+if (DETECTED_PLATFORM STREQUAL "darwin")
+    set(DETECTED_PLATFORM macosx)
+elseif (MINGW)
+    set(DETECTED_PLATFORM mingw32)
+elseif (MSYS)
+    set(DETECTED_PLATFORM msys)
+elseif (CYGWIN)
+    set(DETECTED_PLATFORM cygwin)
+elseif (WIN32)
+    set(DETECTED_PLATFORM win32)
+elseif (UNIX)
+    set(DETECTED_PLATFORM unix)
+endif()
 
-  if (EXISTS ${CMAKE_SOURCE_DIR}/cmake/${_DIST}/CMakeLists.txt)
-    set(PATCH_COMMAND "${CMAKE_COMMAND}" -E copy "${CMAKE_SOURCE_DIR}/cmake/${_DIST}/CMakeLists.txt" "${CMAKE_INSTALL_PREFIX}/tmp/${_DIST}/src/${_DIST}/")
-  else()
-    set(PATCH_COMMAND "")
-  endif()
+set(lua2c_SOURCES lua2c.lua)
 
-  # Build project using the generated settings in cache
-  ExternalProject_Add( ${_DIST}
-      PREFIX ${_DIST}
-      ${_DIST_SOURCE}
-      BINARY_DIR ${_DIST}
-      INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
-      CMAKE_ARGS -C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-      PATCH_COMMAND ${PATCH_COMMAND}
-      DEPENDS ${_PREV}
-    )
-    set ( _PREV ${_DIST})
-    list ( APPEND DEPS ${_DIST} )
-endmacro ()
+install(DIRECTORY ${BUILD_COPY_DIRECTORIES} DESTINATION ${INSTALL_SHARE}/lua2c)
 
-list(LENGTH DISTS DISTS_CNT)
-math(EXPR DISTS_CNT "${DISTS_CNT} / 3 - 1")
+function(build_install KEYS DIR)
+    list(REMOVE_DUPLICATES KEYS)
 
-# Build all modules one after another
-foreach ( BASE_IDX RANGE ${DISTS_CNT})
-  math(EXPR IDX "3 * ${BASE_IDX}")
-  list(GET DISTS ${IDX} DIST )
-  math(EXPR IDX "${IDX} + 1")
-  list(GET DISTS ${IDX} OWNER )
-  math(EXPR IDX "${IDX} + 1")
-  list(GET DISTS ${IDX} TAG )
+    foreach(KEY ${${KEYS}})
+        set(BASE_NAME ${KEYS}_${KEY})
+        install(FILES ${${BASE_NAME}_SRC} DESTINATION ${DIR}/${${BASE_NAME}_DST} RENAME ${${BASE_NAME}_RENAME})
+    endforeach(KEY)
+endfunction(build_install)
 
-  install_dist ( ${DIST} ${OWNER} ${TAG} )
-endforeach ()
+build_install(BUILD_INSTALL_lua ${INSTALL_LMOD})
+build_install(BUILD_INSTALL_lib ${INSTALL_LIB})
+build_install(BUILD_INSTALL_conf ${INSTALL_ETC})
+build_install(BUILD_INSTALL_bin ${INSTALL_BIN})
 
-# Make a fake target
-add_custom_target ( install
-  COMMAND echo "Bootstrap finished: ${BOOT_PREFIX}."
-  DEPENDS ${_PREV}
-)
+install(FILES ${lua2c_SOURCES} DESTINATION ${INSTALL_LMOD}/ RENAME lua2c.lua)
+
