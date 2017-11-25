@@ -11,7 +11,7 @@ script:
 
 # List installed modules
 after_script:
-  - ./_install/bin/luadist list
+  - ./_install/bin/lua ./_install/lib/lua/luadist.lua list
 
 # Only watch the master branch
 branches:
